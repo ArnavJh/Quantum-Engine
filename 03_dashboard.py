@@ -77,8 +77,16 @@ html, body, [class*="css"] {
     color: var(--text);
     -webkit-font-smoothing: antialiased;
 }
-.material-icons, .material-symbols-rounded, span[class*="material-symbols"] {
-    font-family: 'Material Symbols Rounded' !important;
+/* FORCE REPLACE BROKEN MATERIAL ICONS WITH NATIVE ARROWS */
+[data-testid="stSidebarCollapseButton"] span { display: none !important; }
+[data-testid="stSidebarCollapseButton"]::after {
+    content: "❮" !important;
+    font-family: Arial, sans-serif; color: #8e8e93; font-size: 1.2rem;
+}
+[data-testid="collapsedControl"] span { display: none !important; }
+[data-testid="collapsedControl"]::after {
+    content: "❯" !important;
+    font-family: Arial, sans-serif; color: #8e8e93; font-size: 1.2rem;
 }
 h1, h2, h3 { font-family: 'Inter', -apple-system, sans-serif !important; font-weight: 600; }
 
