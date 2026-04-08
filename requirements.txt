@@ -1,0 +1,12 @@
+streamlit
+plotly
+yfinance
+numpy
+pandas
+joblib
+vaderSentiment
+newsapi-python
+arch
+qiskit
+qiskit-aer
+qiskit-ibm-runtime
