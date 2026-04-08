@@ -88,31 +88,29 @@ PORTFOLIO_VALUE = 100000.0
 if os.path.exists(UPLOADED_FILE):
     try:
         up_df = pd.read_csv(UPLOADED_FILE)
-        col_names = [c.strip().lower() for c in up_df.columns]
-        
-        # Determine columns
         stock_col = up_df.columns[0]
-        qty_col = up_df.columns[1] if len(up_df.columns) > 1 else None
-        
         for idx, row in up_df.iterrows():
             stk = str(row[stock_col]).strip().upper()
             ticker = stk + ".NS" if "." not in stk else stk
             name = stk.replace(".NS", "")
             USER_STOCKS[name] = ticker
-            OWNED_TICKERS.append(name)
-            
-        print(f"[CONFIG] Loaded from CSV: {UPLOADED_FILE}")
+            if name not in OWNED_TICKERS: OWNED_TICKERS.append(name)
+        print(f"[CONFIG] Merged CSV: {UPLOADED_FILE}")
     except Exception as e:
         print(f"[CONFIG] Error reading {UPLOADED_FILE}: {e}")
-elif os.path.exists(STOCKS_FILE):
-    with open(STOCKS_FILE) as f:
-        stock_cfg = json.load(f)
-    s_st = stock_cfg.get("stocks", {})
-    if s_st:
-        USER_STOCKS.update(s_st)
-        OWNED_TICKERS = list(s_st.keys())
-    PORTFOLIO_VALUE = float(stock_cfg.get("portfolio_value", 100000))
-    print(f"[CONFIG] Loaded from dashboard: {STOCKS_FILE}")
+
+if os.path.exists(STOCKS_FILE):
+    try:
+        with open(STOCKS_FILE) as f:
+            stock_cfg = json.load(f)
+        s_st = stock_cfg.get("stocks", {})
+        if s_st:
+            USER_STOCKS.update(s_st)
+            for name in s_st.keys():
+                if name not in OWNED_TICKERS: OWNED_TICKERS.append(name)
+        PORTFOLIO_VALUE = float(stock_cfg.get("portfolio_value", PORTFOLIO_VALUE))
+        print(f"[CONFIG] Merged Dashboard selections: {STOCKS_FILE}")
+    except Exception as e: pass
 else:
     print("[CONFIG] No configs found -- using defaults")
     try:
@@ -214,12 +212,12 @@ today     = datetime.today()
 news_from = today - timedelta(days=25)
 
 def price_proxy_live(s_last, s_vol):
-    mom  = s_last.pct_change(5)
-    vol  = s_vol.pct_change(5)
+    mom  = s_last.pct_change(5).fillna(0)
+    vol  = s_vol.pct_change(5).fillna(0)
     raw  = mom * (1 + vol.clip(lower=0))
     rmax = raw.rolling(min(60,len(raw))).max().replace(0,1e-9)
     rmin = raw.rolling(min(60,len(raw))).min()
-    return (2*(raw-rmin)/(rmax-rmin+1e-9)-1).clip(-1,1)
+    return (2*(raw-rmin)/(rmax-rmin+1e-9)-1).clip(-1,1).fillna(0)
 
 def fetch_news_score(name, query):
     try:
