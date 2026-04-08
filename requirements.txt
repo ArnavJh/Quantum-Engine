@@ -10,3 +10,4 @@ arch
 qiskit
 qiskit-aer
 qiskit-ibm-runtime
+scikit-learn
