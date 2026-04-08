@@ -48,9 +48,17 @@ st.markdown("""
 [data-testid="stAppViewContainer"] {
     background-color: transparent !important;
 }
-[data-testid="stHeader"], header, footer, #MainMenu {
+#MainMenu, footer {
     visibility: hidden !important;
     display: none !important;
+}
+[data-testid="stHeader"] {
+    background-color: transparent !important;
+}
+/* HIDE THE "PRESS ENTER" KEYBOARD INSTRUCTION */
+div[data-testid="InputInstructions"] {
+    display: none !important;
+    visibility: hidden !important;
 }
 
 /* THE GLOBAL FINASSIST BACKGROUND */
@@ -661,12 +669,12 @@ st.markdown(f"""
                  color:#64748b;'>QPU THIS RUN</span>
     <div style='flex:1;background:#1e293b;
                 border-radius:4px;height:5px;'>
-        <div style='background:{qcol};
-                    width:{qpct*100:.1f}%;
+        <div style='background:{qpu_color};
+                    width:{qpu_pct*100:.1f}%;
                     height:5px;border-radius:4px;'></div>
     </div>
     <span style='font-family:Inter, sans-serif;font-size:.62rem;
-                 color:{qcol};'>{qpu_used}s used</span>
+                 color:{qpu_color};'>{qpu_used}s used</span>
 </div>""", unsafe_allow_html=True)
 st.markdown("<br>", unsafe_allow_html=True)
 
