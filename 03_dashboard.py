@@ -77,6 +77,9 @@ html, body, [class*="css"] {
     color: var(--text);
     -webkit-font-smoothing: antialiased;
 }
+.material-icons, .material-symbols-rounded, span[class*="material-symbols"] {
+    font-family: 'Material Symbols Rounded' !important;
+}
 h1, h2, h3 { font-family: 'Inter', -apple-system, sans-serif !important; font-weight: 600; }
 
 /* THE SIDEBAR */
@@ -443,11 +446,6 @@ with st.sidebar:
                 unsafe_allow_html=True)
     if not st.session_state.selected_stocks:
         st.caption("No stocks added yet")
-        if st.button("Scan Today's Movers",
-                      use_container_width=True):
-            with st.spinner("Scanning NIFTY 50 for gainers, losers & volatility..."):
-                st.session_state.selected_stocks = scan_market_movers()
-            st.rerun()
     else:
         for name, ticker in list(
                 st.session_state.selected_stocks.items()):
@@ -464,6 +462,12 @@ with st.sidebar:
         if st.button("Clear All", use_container_width=True):
             st.session_state.selected_stocks = {}
             st.rerun()
+            
+    if st.button("Scan Today's Movers", use_container_width=True):
+        with st.spinner("Scanning NIFTY 50 for gainers, losers & volatility..."):
+            scanned = scan_market_movers()
+            st.session_state.selected_stocks.update(scanned)
+        st.rerun()
 
     # Settings
     st.markdown('<div class="shead">SETTINGS</div>',
